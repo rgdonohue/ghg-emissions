@@ -58,7 +58,10 @@
 			.data(facilities.features)
 			.enter().append('path')
 			.attr('class', 'facilities')
-			.attr('d', path.pointRadius(function(d) { return radius(d.properties.total_emissions); }));
+			.attr('d', path.pointRadius(function(d) { return radius(d.properties.total_emissions); }))
+			.on('mouseover', function() {
+				console.log(this);
+			});
 
 		zoom = d3.behavior.zoom()
 		    .scaleExtent([1, 16])
@@ -68,6 +71,10 @@
 			.call(zoom.event);			
 	
 	} // end drawMap
+
+	function retrieve() {
+		console.log(this);
+	}
 
 	function scaleFeatures() {
 		
@@ -80,13 +87,11 @@
 		var zoomScale = function(scaleIn) {
 
 			// switch statement actually slower here!!!
-			if(scaleIn == 1) { return 16; }
-			if(scaleIn > 1 && scaleIn <= 5) { return 14; }
-			if(scaleIn > 5 && scaleIn <= 10) { return 12; }
-			if(scaleIn > 10 && scaleIn <= 15) { return 10; }
-			if(scaleIn > 15  && scaleIn <= 20) { return 8; }
-			if(scaleIn > 20 && scaleIn <= 25) { return 6; }
-			if(scaleIn > 25 && scaleIn <= 30) { return 4; }
+			if(scaleIn >= 1 && scaleIn <= 5) { return [30, 1]; }
+			if(scaleIn > 5 && scaleIn <= 10) { return [22, .5]; }
+			if(scaleIn > 10 && scaleIn <= 15) { return [15, .4]; }
+			if(scaleIn > 15  && scaleIn <= 20) { return [10, .3]; }
+			if(scaleIn > 20 && scaleIn <= 25) { return [6, .1]; }
 
 		}
   		g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
@@ -94,7 +99,8 @@
   			
   			var s = zoom.scale();
 
-  			radius.range([2,zoomScale(s)])
+  			radius.range([2,zoomScale(s)[0]])
+  			d3.selectAll('.facilities').style('stroke-width', String(zoomScale(s)[1])+'px');
   			
   		});
 
